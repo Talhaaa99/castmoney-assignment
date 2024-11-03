@@ -20,16 +20,16 @@ interface FeedCardProps {
 
 export function FeedCard({ trades, onFilterClick }: FeedCardProps) {
   return (
-    <Card>
+    <Card className="rounded-xl shadow-lg bg-zinc-900 text-zinc-300 border border-zinc-800">
       <CardHeader>
-        <CardTitle>Recent Trades</CardTitle>
+        <CardTitle className="text-lg lowercase">recent trades</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
           {trades.map((trade) => (
             <div
               key={trade.id}
-              className="flex items-start gap-4 p-4 rounded-lg bg-muted/50"
+              className="flex items-start gap-4 p-4 rounded-lg bg-black bg-opacity-40"
             >
               <Avatar>
                 <AvatarImage src={trade.avatar} alt={trade.user} />
@@ -37,29 +37,29 @@ export function FeedCard({ trades, onFilterClick }: FeedCardProps) {
               </Avatar>
               <div className="flex-1 space-y-1">
                 <div className="flex items-center justify-between">
-                  <span className="font-medium">{trade.user}</span>
+                  <span className="font-medium lowercase">{trade.user}</span>
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-8 w-8"
+                    className="h-8 w-8 text-zinc-500 hover:text-zinc-300"
                     onClick={() => onFilterClick(trade.user)}
                   >
                     <Filter className="h-4 w-4" />
-                    <span className="sr-only">Filter by user</span>
+                    <span className="sr-only">filter by user</span>
                   </Button>
                 </div>
-                <p className="text-sm text-muted-foreground">{trade.bio}</p>
+                <p className="text-sm text-zinc-500 lowercase">{trade.bio}</p>
                 <div className="flex items-center gap-2 text-sm">
                   <span
                     className={
-                      trade.type === "buy" ? "text-green-500" : "text-red-500"
+                      trade.type === "buy" ? "text-green-400" : "text-red-400"
                     }
                   >
-                    {trade.type.toUpperCase()}
+                    {trade.type.toLowerCase()}
                   </span>
-                  <span>{trade.amount}</span>
-                  <span className="text-muted-foreground">
-                    {trade.timestamp}
+                  <span>{trade.amount.toLowerCase()}</span>
+                  <span className="text-zinc-500">
+                    {trade.timestamp.toLowerCase()}
                   </span>
                 </div>
               </div>

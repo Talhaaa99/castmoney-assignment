@@ -1,5 +1,4 @@
 "use client";
-
 import { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -14,41 +13,14 @@ import {
   Tooltip,
   CartesianGrid,
 } from "recharts";
-import { FeedCard } from "./components/feed-card";
+import { FeedCard } from "./feed-card";
+import { useDashboardData } from "@/hooks/useDashboardData";
 
-// Mock data - replace with API data in production
-const priceData = [
-  { timestamp: "2024-01-01", price: 0.02446, volume: 1000000 },
-  { timestamp: "2024-01-02", price: 0.025, volume: 1200000 },
-  { timestamp: "2024-01-03", price: 0.0255, volume: 1500000 },
-  { timestamp: "2024-01-04", price: 0.026, volume: 1300000 },
-  { timestamp: "2024-01-05", price: 0.0265, volume: 1800000 },
-];
-
-const trades = [
-  {
-    id: 1,
-    user: "eth_eth",
-    avatar: "/placeholder.svg",
-    bio: "Full-time crypto trader",
-    amount: "$2.3K",
-    timestamp: "2024-01-01 14:30",
-    type: "buy",
-  },
-  {
-    id: 2,
-    user: "bob_trader",
-    avatar: "/placeholder.svg",
-    bio: "DeFi enthusiast",
-    amount: "$1.8K",
-    timestamp: "2024-01-01 15:45",
-    type: "sell",
-  },
-];
-
-export default function Component() {
+export default function Dashboard() {
   const [filteredUser, setFilteredUser] = useState<string | null>(null);
+  const { priceData, trades, loading, error } = useDashboardData();
 
+  // Handler for filtering trades by user
   const handleFilterClick = (user: string) => {
     setFilteredUser((prevUser) => (prevUser === user ? null : user));
   };
@@ -56,6 +28,24 @@ export default function Component() {
   const filteredTrades = filteredUser
     ? trades.filter((trade) => trade.user === filteredUser)
     : trades;
+
+  // Loading state UI
+  if (loading) {
+    return (
+      <div role="status" aria-live="polite">
+        Loading data...
+      </div>
+    );
+  }
+
+  // Error state UI
+  if (error) {
+    return (
+      <div role="alert" className="text-red-600">
+        {error}
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-4 p-4 min-h-screen bg-background text-foreground">
@@ -90,14 +80,8 @@ export default function Component() {
           <CardContent>
             <ChartContainer
               config={{
-                price: {
-                  label: "Price",
-                  color: "hsl(var(--primary))",
-                },
-                volume: {
-                  label: "Volume",
-                  color: "hsl(var(--muted))",
-                },
+                price: { label: "Price", color: "hsl(var(--primary))" },
+                volume: { label: "Volume", color: "hsl(var(--muted))" },
               }}
               className="h-[400px]"
             >
