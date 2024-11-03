@@ -5,29 +5,47 @@ import { PriceData, Trades } from "@/types/dashboard";
 export const useDashboardData = () => {
   const [priceData, setPriceData] = useState<PriceData[]>([]);
   const [trades, setTrades] = useState<Trades[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState<{ price: boolean; trades: boolean }>({
+    price: true,
+    trades: true,
+  });
+  const [error, setError] = useState<{
+    price: string | null;
+    trades: string | null;
+  }>({
+    price: null,
+    trades: null,
+  });
 
   useEffect(() => {
-    const loadData = async () => {
-      setLoading(true);
-      setError(null);
+    const loadPriceData = async () => {
+      setLoading((prev) => ({ ...prev, price: true }));
+      setError((prev) => ({ ...prev, price: null }));
       try {
-        const [priceResponse, tradesResponse] = await Promise.all([
-          fetchPriceData(),
-          fetchTradesData(),
-        ]);
-
-        setPriceData(priceResponse);
-        setTrades(tradesResponse);
+        const data = await fetchPriceData();
+        setPriceData(data);
       } catch {
-        setError("Failed to fetch data. Please try again later.");
+        setError((prev) => ({ ...prev, price: "Failed to load price data." }));
       } finally {
-        setLoading(false);
+        setLoading((prev) => ({ ...prev, price: false }));
       }
     };
 
-    loadData();
+    const loadTradesData = async () => {
+      setLoading((prev) => ({ ...prev, trades: true }));
+      setError((prev) => ({ ...prev, trades: null }));
+      try {
+        const data = await fetchTradesData();
+        setTrades(data);
+      } catch {
+        setError((prev) => ({ ...prev, trades: "Failed to load trade data." }));
+      } finally {
+        setLoading((prev) => ({ ...prev, trades: false }));
+      }
+    };
+
+    loadPriceData();
+    loadTradesData();
   }, []);
 
   return { priceData, trades, loading, error };
