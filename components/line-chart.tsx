@@ -19,7 +19,7 @@ const ModernChart: React.FC<ModernChartProps> = ({
   tokenSymbol,
 }) => {
   const [selectedTimespan, setSelectedTimespan] = useState<TimeSpan>("1d");
-  const [loadedImages, setLoadedImages] = useState<Set<string>>(new Set());
+  const [, setLoadedImages] = useState<Set<string>>(new Set());
   const [imagesLoading, setImagesLoading] = useState(true);
 
   const formatDate = (timestamp: number) => {
@@ -150,6 +150,7 @@ const ModernChart: React.FC<ModernChartProps> = ({
         textStyle: { color: "#00FF41" },
         backgroundColor: "rgba(0, 0, 0, 0.9)",
         borderColor: "#00FF41",
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         formatter: (params: any) => {
           const markPoint = params[0]?.data?.markPoint;
           if (markPoint) {

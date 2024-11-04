@@ -10,7 +10,7 @@ import ModernChart from "./line-chart";
 export default function Dashboard() {
   const [filteredUser, setFilteredUser] = useState<string | null>(null);
   const { priceData, trades, loading, error } = useDashboardData();
-  const [isDataReady, setIsDataReady] = useState(false);
+  const [, setIsDataReady] = useState(false);
 
   const handleFilterClick = (user: string) => {
     setFilteredUser((prevUser) => (prevUser === user ? null : user));
