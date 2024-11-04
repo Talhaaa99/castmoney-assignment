@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -10,6 +10,7 @@ import ModernChart from "./line-chart";
 export default function Dashboard() {
   const [filteredUser, setFilteredUser] = useState<string | null>(null);
   const { priceData, trades, loading, error } = useDashboardData();
+  const [isDataReady, setIsDataReady] = useState(false);
 
   const handleFilterClick = (user: string) => {
     setFilteredUser((prevUser) => (prevUser === user ? null : user));
@@ -18,6 +19,13 @@ export default function Dashboard() {
   const filteredTrades = filteredUser
     ? trades.filter((trade) => trade.profile.username === filteredUser)
     : trades;
+
+  useEffect(() => {
+    // Set isDataReady to true only when trades are loaded
+    if (!loading.trades && trades.length > 0) {
+      setIsDataReady(true);
+    }
+  }, [loading.trades, trades]);
 
   return (
     <div className="flex flex-col gap-4 p-4 min-h-screen bg-background text-foreground">
@@ -50,8 +58,8 @@ export default function Dashboard() {
         </Tabs>
       </header>
 
-      <div className="grid gap-4 md:grid-cols-[2fr_1fr]">
-        <Card className="bg-card shadow-lg">
+      <div className="grid gap-4 md:grid-row-[2fr_1fr]">
+        <Card className="bg-card shadow-lg w-full">
           <CardContent>
             <ModernChart
               priceData={priceData}
