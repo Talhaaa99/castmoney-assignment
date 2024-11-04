@@ -22,7 +22,7 @@ export const useDashboardData = () => {
       setLoading((prev) => ({ ...prev, price: true }));
       setError((prev) => ({ ...prev, price: null }));
       try {
-        const data = await fetchPriceData();
+        const data: PriceData[] = await fetchPriceData();
         setPriceData(data);
       } catch {
         setError((prev) => ({ ...prev, price: "Failed to load price data." }));
@@ -35,7 +35,7 @@ export const useDashboardData = () => {
       setLoading((prev) => ({ ...prev, trades: true }));
       setError((prev) => ({ ...prev, trades: null }));
       try {
-        const data = await fetchTradesData();
+        const data: Trades[] = await fetchTradesData();
         setTrades(data);
       } catch {
         setError((prev) => ({ ...prev, trades: "Failed to load trade data." }));

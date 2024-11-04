@@ -1,20 +1,11 @@
 "use client";
 import { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ChartContainer, ChartTooltipContent } from "@/components/ui/chart";
+import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Line,
-  LineChart,
-  ResponsiveContainer,
-  XAxis,
-  YAxis,
-  Tooltip,
-  CartesianGrid,
-} from "recharts";
 import { FeedCard } from "./feed-card";
 import { useDashboardData } from "@/hooks/useDashboardData";
+import ModernChart from "./line-chart";
 
 export default function Dashboard() {
   const [filteredUser, setFilteredUser] = useState<string | null>(null);
@@ -25,7 +16,7 @@ export default function Dashboard() {
   };
 
   const filteredTrades = filteredUser
-    ? trades.filter((trade) => trade.user === filteredUser)
+    ? trades.filter((trade) => trade.profile.username === filteredUser)
     : trades;
 
   return (
@@ -61,73 +52,18 @@ export default function Dashboard() {
 
       <div className="grid gap-4 md:grid-cols-[2fr_1fr]">
         <Card className="bg-card shadow-lg">
-          <CardHeader>
-            <CardTitle className="text-primary">Price Chart</CardTitle>
-          </CardHeader>
           <CardContent>
-            {error.price ? (
-              <div className="text-red-600">{error.price}</div>
-            ) : loading.price ? (
-              <div className="text-muted-foreground">Loading chart data...</div>
-            ) : (
-              <ChartContainer
-                config={{
-                  price: { label: "Price", color: "hsl(var(--primary))" },
-                  volume: { label: "Volume", color: "hsl(var(--muted))" },
-                }}
-                className="h-[400px]"
-              >
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={priceData}>
-                    <CartesianGrid
-                      strokeDasharray="3 3"
-                      stroke="var(--border)"
-                    />
-                    <XAxis
-                      dataKey="timestamp"
-                      tickFormatter={(value) =>
-                        new Date(value).toLocaleDateString()
-                      }
-                      stroke="var(--muted-foreground)"
-                    />
-                    <YAxis yAxisId="left" stroke="var(--muted-foreground)" />
-                    <YAxis
-                      yAxisId="right"
-                      orientation="right"
-                      stroke="var(--muted-foreground)"
-                    />
-                    <Tooltip content={<ChartTooltipContent />} />
-                    <Line
-                      yAxisId="left"
-                      type="monotone"
-                      dataKey="price"
-                      stroke="hsl(var(--primary))"
-                      strokeWidth={2}
-                      dot={false}
-                      activeDot={{ r: 8 }}
-                    />
-                    <Line
-                      yAxisId="right"
-                      type="monotone"
-                      dataKey="volume"
-                      stroke="hsl(var(--muted))"
-                      strokeWidth={2}
-                      dot={false}
-                      activeDot={{ r: 8 }}
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
-              </ChartContainer>
-            )}
+            <ModernChart
+              priceData={priceData}
+              trades={filteredTrades}
+              tokenSymbol="$TOKEN"
+            />
           </CardContent>
         </Card>
-
-        <Card className="bg-card shadow-lg">
-          <CardHeader>
-            <CardTitle className="text-primary">Trades Feed</CardTitle>
-          </CardHeader>
+        {/* Feed Card */}
+        <Card className="p-0 shadow-lg">
           <CardContent>
-            {error.trades ? (
+            {error && error.trades ? (
               <div className="text-red-600">{error.trades}</div>
             ) : loading.trades ? (
               <div className="text-muted-foreground">Loading trades...</div>
